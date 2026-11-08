@@ -1,6 +1,14 @@
 
 from pathlib import Path
 
+CATEGORIES = {
+    "Documents": [".pdf", ".docx", ".txt", ".doc"],
+    "Images": [".jpg", ".jpeg", ".png", ".gif"],
+    "Videos": [".mp4", ".mov", ".avi"],
+    "Music": [".mp3", ".wav"],
+    "Archives": [".zip", ".rar", ".7z"],
+    "Executable": [".exe"]
+}
 
 def scan_directory(directory):
     """
@@ -31,6 +39,23 @@ def scan_directory(directory):
 
     return files
 
+def categorize_file(file):
+    """
+    Determine the category of a file based on its extension.
+
+    Args:
+        file: Path object representing a file.
+
+    Returns:
+        The file's category, or Other if unknown.
+    """
+    extension = file.suffix.lower()
+
+    for category, extensions in CATEGORIES.items():
+        if extension in extensions:
+            return category
+
+    return "Other"
 
 def main():
     print("===== SMART FILE ORGANIZER =====")
@@ -43,7 +68,8 @@ def main():
         print(f"\nFound {len(files)} files:\n")
 
         for file in files:
-            print(f"- {file.name}")
+            category = categorize_file(file)
+            print(f"- {file.name} -> {category}")
 
     except ValueError as error:
         print(f"\nError: {error}")
@@ -51,3 +77,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
