@@ -57,19 +57,43 @@ def categorize_file(file):
 
     return "Other"
 
+
+def preview_organization(files, directory):
+    """
+    Display the planned organization without moving files.
+
+    Args:
+        files: List of files to organize.
+        directory: The directory being organized.
+    """
+    print("\n========== ORGANIZATION PREVIEW ==========")
+
+    if not files:
+        print("No files to organize.")
+        return
+
+    for file in files:
+        category = categorize_file(file)
+        destination = directory / category / file.name
+
+        print(f"{file.name} -> {category}/{file.name}")
+
+    print("\n==========================================")
+    print(f"Total files to organize: {len(files)}")
+
+
 def main():
     print("===== SMART FILE ORGANIZER =====")
 
     directory = input("Enter directory path: ").strip()
 
     try:
-        files = scan_directory(directory)
+        path = Path(directory)
+        files = scan_directory(path)
 
-        print(f"\nFound {len(files)} files:\n")
+        print(f"\nFound {len(files)} files.")
 
-        for file in files:
-            category = categorize_file(file)
-            print(f"- {file.name} -> {category}")
+        preview_organization(files, path)
 
     except ValueError as error:
         print(f"\nError: {error}")
