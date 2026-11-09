@@ -81,6 +81,23 @@ def preview_organization(files, directory):
     print("\n==========================================")
     print(f"Total files to organize: {len(files)}")
 
+def confirm_action():
+    """
+    Ask the user whether to proceed with organization.
+
+    Returns:
+        True if the user confirms, False otherwise.
+    """
+    while True:
+        answer = input("\nProceed with organization? (y/n): ").strip().lower()
+
+        if answer == "y":
+            return True
+
+        if answer == "n":
+            return False
+
+        print("Invalid input. Please enter 'y' or 'n'.")
 
 def main():
     print("===== SMART FILE ORGANIZER =====")
@@ -94,7 +111,12 @@ def main():
         print(f"\nFound {len(files)} files.")
 
         preview_organization(files, path)
-
+        
+        if confirm_action():
+            print("\nConfirmed! Ready to organize files.")
+        else:
+            print("\nOrganization cancelled.")
+            
     except ValueError as error:
         print(f"\nError: {error}")
 
