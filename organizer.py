@@ -1,14 +1,15 @@
+import json
 from pathlib import Path
 import shutil
 
-CATEGORIES = {
-    "Documents": [".pdf", ".docx", ".txt", ".doc"],
-    "Images": [".jpg", ".jpeg", ".png", ".gif"],
-    "Videos": [".mp4", ".mov", ".avi"],
-    "Music": [".mp3", ".wav"],
-    "Archives": [".zip", ".rar", ".7z"],
-    "Executable": [".exe"]
-}
+CONFIG_PATH = Path(__file__).parent / "config.json"
+
+def load_config():
+    with open(CONFIG_PATH, "r") as config_file:
+        return json.load(config_file)
+
+CONFIG = load_config()
+CATEGORIES = CONFIG["categories"]
 
 def scan_directory(directory):
     """
@@ -55,7 +56,7 @@ def categorize_file(file):
         if extension in extensions:
             return category
 
-    return "Other"
+    return CONFIG["other_category"]
 
 def organize_files(files, directory):
     """
@@ -192,7 +193,7 @@ def main():
 
         preview_organization(files, path)
                 
-        if confirm_action():
+        if not CONFIG["ask_confirmation"] or confirm_action():
             category_counts = organize_files(files, path)
             display_report(category_counts)
         else:

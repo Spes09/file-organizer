@@ -1,0 +1,12 @@
+{
+    "categories": {
+        "Documents": [".pdf", ".docx", ".txt", ".doc"],
+        "Images": [".jpg", ".jpeg", ".png", ".gif"],
+        "Videos": [".mp4", ".mov", ".avi"],
+        "Music": [".mp3", ".wav"],
+        "Archives": [".zip", ".rar", ".7z"],
+        "Executable": [".exe"]
+    },
+    "other_category": "Other",
+    "ask_confirmation": true
+}
