@@ -59,13 +59,40 @@ def categorize_file(file):
 
 def organize_files(files, directory):
     """
-    Organize files into their respective category folders.
+    Organize files and track the number moved into each category.
+
+    Returns:
+        A dictionary containing the number of files per category.
     """
+    category_counts = {}
+
     for file in files:
         category = categorize_file(file)
         move_file(file, category, directory)
 
-    print("\nAll files have been organized successfully!")
+        category_counts[category] = (
+            category_counts.get(category, 0) + 1
+        )
+
+    return category_counts
+
+def display_report(category_counts):
+    """
+    Display a summary of the organization process.
+    """
+    total_files = sum(category_counts.values())
+
+    print("\n========== ORGANIZATION COMPLETE ==========")
+    print(f"\nFiles organized: {total_files}\n")
+
+    for category in list(CATEGORIES) + ["Other"]:
+        count = category_counts.get(category, 0)
+
+        if count > 0:
+            print(f"{category}: {count}")
+
+    print("\nOperation completed successfully!")
+    print("============================================")
 
 def preview_organization(files, directory):
     """
@@ -166,7 +193,8 @@ def main():
         preview_organization(files, path)
                 
         if confirm_action():
-            organize_files(files, path)
+            category_counts = organize_files(files, path)
+            display_report(category_counts)
         else:
             print("\nOrganization cancelled.")
                     
