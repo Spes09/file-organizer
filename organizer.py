@@ -1,5 +1,5 @@
-
 from pathlib import Path
+import shutil
 
 CATEGORIES = {
     "Documents": [".pdf", ".docx", ".txt", ".doc"],
@@ -57,6 +57,15 @@ def categorize_file(file):
 
     return "Other"
 
+def organize_files(files, directory):
+    """
+    Organize files into their respective category folders.
+    """
+    for file in files:
+        category = categorize_file(file)
+        move_file(file, category, directory)
+
+    print("\nAll files have been organized successfully!")
 
 def preview_organization(files, directory):
     """
@@ -74,9 +83,13 @@ def preview_organization(files, directory):
 
     for file in files:
         category = categorize_file(file)
-        destination = directory / category / file.name
-
-        print(f"{file.name} -> {category}/{file.name}")
+        destination = directory / category
+    
+        target = get_unique_destination(destination, file.name)
+    
+        relative_target = target.relative_to(directory)
+    
+        print(f"{file.name} -> {relative_target}")
 
     print("\n==========================================")
     print(f"Total files to organize: {len(files)}")
@@ -99,6 +112,46 @@ def confirm_action():
 
         print("Invalid input. Please enter 'y' or 'n'.")
 
+def get_unique_destination(destination, filename):
+    """
+    Generate a unique destination path to prevent overwriting files.
+
+    If the filename already exists, append a number before
+    the extension (e.g. homework_1.pdf).
+    """
+    destination = Path(destination)
+    original_file = Path(filename)
+
+    target = destination / filename
+    counter = 1
+
+    while target.exists():
+        new_name = (
+            f"{original_file.stem}_{counter}"
+            f"{original_file.suffix}"
+        )
+        target = destination / new_name
+        counter += 1
+
+    return target
+
+
+def move_file(file, category, directory):
+    """
+    Move a file into its category folder without overwriting.
+    """
+    destination = directory / category
+
+    # Create category folder if necessary.
+    destination.mkdir(exist_ok=True)
+
+    # Generate a unique filename.
+    target = get_unique_destination(destination, file.name)
+
+    # Move the file.
+    shutil.move(str(file), str(target))
+
+
 def main():
     print("===== SMART FILE ORGANIZER =====")
 
@@ -111,12 +164,12 @@ def main():
         print(f"\nFound {len(files)} files.")
 
         preview_organization(files, path)
-        
+                
         if confirm_action():
-            print("\nConfirmed! Ready to organize files.")
+            organize_files(files, path)
         else:
             print("\nOrganization cancelled.")
-            
+                    
     except ValueError as error:
         print(f"\nError: {error}")
 
